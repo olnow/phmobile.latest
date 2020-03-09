@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane fx:id="rootGrid" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="olnow.phmobile.PeopleSelectForm">
+   <children>
+       <VBox>
+            <Label text="Input FIO" />
+            <HBox>
+                 <children>
+                     <TextField fx:id="mTextFieldSearchFIO" onAction="#onActionSearch" prefWidth="300" />
+                     <Button onAction="#onActionSearch" prefWidth="100" text="Search" />
+                 </children>
+            </HBox>
+      
+            <Label text="Select FIO from List">
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Label>
+            <ChoiceBox fx:id="mChoicePeople" onKeyPressed="#onChoicePeopleScroll" prefWidth="400" />
+      
+            <Label text="Select date of issue" >
+                <VBox.margin>
+                    <Insets top="10.0" />
+                </VBox.margin>
+            </Label>
+              <DatePicker fx:id="mDatePicker" prefWidth="400" />
+      
+              <Label text="Select Department from list or input manual" >
+                  <VBox.margin>
+                      <Insets top="10.0" />
+                  </VBox.margin>
+              </Label>
+
+            <ChoiceBox fx:id="mChoiceDepartment" prefWidth="400" />
+              <TextField fx:id="mTextFieldDepartment" prefWidth="400" />
+      
+              <Label text="Select Position from list or input manual" >
+                  <VBox.margin>
+                      <Insets top="10.0" />
+                  </VBox.margin>
+              </Label>
+
+            <ChoiceBox fx:id="mChoicePosition" prefWidth="400" />
+              <TextField fx:id="mTextFieldPosition" prefWidth="400" />
+      
+              <Label text="Input AD account, select people type" >
+                  <VBox.margin>
+                      <Insets top="10.0" />
+                  </VBox.margin>
+              </Label>
+
+            <HBox>
+                 <children>
+                     <TextField fx:id="mTextFieldAccount" prefWidth="200" />
+                     <CheckBox fx:id="mCheckServiceAccount" prefWidth="200" text="Service Account" />
+                 </children>
+            </HBox>
+            <HBox alignment="BASELINE_RIGHT">
+                 <children>
+                     <Button onAction="#onClickBtnUpdate" prefWidth="100" text="Update" />
+                     <Button onAction="#onClickBtnAdd" prefWidth="100" text="Add" />
+                 </children>
+            </HBox>
+            <Label />
+            <HBox alignment="BASELINE_RIGHT">
+                 <children>
+                     <Button defaultButton="true" onAction="#onClickBtnOK" prefWidth="100" text="OK" />
+                     <Button cancelButton="true" onAction="#onClickBtnCancel" prefWidth="100" text="Cancel" />
+                 </children>
+            </HBox>
+         <GridPane.margin>
+            <Insets left="5.0" />
+         </GridPane.margin>
+   
+       </VBox>
+</children>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+</GridPane>
