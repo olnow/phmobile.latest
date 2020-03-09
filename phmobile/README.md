@@ -1,2 +1,2 @@
 # phmobile
-Root services to work with BD, desctop client (for test)
+Root services to work with DB, desktop client (for test)
