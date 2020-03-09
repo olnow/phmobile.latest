@@ -1,0 +1,3 @@
+[submodule "phmobile/phmobile"]
+	path = phmobile/phmobile
+	url = https://github.com/olnow/phmobile
