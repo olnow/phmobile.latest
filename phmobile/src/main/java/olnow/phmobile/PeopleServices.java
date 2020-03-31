@@ -17,11 +17,20 @@ public class PeopleServices {
     public ArrayList<String> getDepartments() { return this.people.getDepartments(); }
     public ArrayList<String> getPositions() { return this.people.getPositions(); }
 
+    public People findByAccount(String account) {
+        return people.find(People.class, People_.account, account);
+    }
+
+    public ArrayList<People> get(String fio) {
+        return people.get(People.class, People_.fio, fio);
+    }
+
     public ArrayList<People> findPeopleAndSetID(ArrayList<People> people) {
         if (people == null) return null;
         people.forEach(human -> {
-            if (human != null) {
-                People findPeople = findPeople(human.getFio());
+            if (human != null && human.getAccount() != null && !human.getAccount().isEmpty()) {
+                // People findPeople = findPeople(human.getFio());
+                People findPeople = findByAccount(human.getAccount());
                 if (findPeople != null) human.setIdpeople(findPeople.getIdpeople());
             }
         });

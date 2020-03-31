@@ -1,5 +1,6 @@
 package olnow.phmobile;
 
+import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -9,8 +10,11 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.MapAttribute;
+import javax.persistence.metamodel.SingularAttribute;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -153,4 +157,54 @@ public class PeopleDAO {
             session.close();
         }
     }
+
+    public People find(Class className, SingularAttribute attr, String name) throws HibernateException {
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        CriteriaBuilder criteria = session.getCriteriaBuilder();
+        CriteriaQuery<People> criteriaQuery = criteria.createQuery(className);
+        Root<People> root = criteriaQuery.from(className);
+        Predicate[] predicates = new Predicate[1];
+        predicates[0] = criteria.equal(root.get(attr), name);
+        criteriaQuery.select(root).where(predicates);
+        Query<People> query = session.createQuery(criteriaQuery);
+        try {
+            People object = query.getSingleResult();
+            if (object != null) return object;
+        }
+        catch (NoResultException e) {
+        }
+        catch (HibernateException e) {
+            System.out.println("RootDAO: find exception: " + e.toString());
+        }
+        finally {
+            session.close();
+        }
+        return null;
+    }
+
+    public ArrayList<People> get(Class className, SingularAttribute attr, String likeValue) throws HibernateException {
+        if (likeValue == null || likeValue.isEmpty()) return null;
+        Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
+        CriteriaBuilder criteria = session.getCriteriaBuilder();
+        CriteriaQuery<People> criteriaQuery = criteria.createQuery(className);
+        Root<People> root = criteriaQuery.from(className);
+        Predicate[] predicates = new Predicate[1];
+        predicates[0] = criteria.like(root.get(attr).as(String.class), likeValue + "%");
+        criteriaQuery.select(root).where(predicates);
+        Query<People> query = session.createQuery(criteriaQuery);
+        try {
+            ArrayList<People> object = (ArrayList<People>) query.getResultList();
+            if (object != null) return object;
+        }
+        catch (NoResultException e) {
+        }
+        catch (HibernateException e) {
+            System.out.println("RootDAO: find exception: " + e.toString());
+        }
+        finally {
+            session.close();
+        }
+        return null;
+    }
+
 }
