@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: olnow.phmobile.Main
 Implementation-Title: Extended StAX API
 Implementation-Version: 1.8
 Implementation-Vendor-Id: org.jvnet.staxex
