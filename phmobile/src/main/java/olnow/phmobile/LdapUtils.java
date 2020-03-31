@@ -161,7 +161,7 @@ public class LdapUtils {
     }
 
     public ArrayList<People> find(String fio) {
-        if (fio == null || fio.isEmpty() || dirContext == null)
+        if (fio == null || fio.isEmpty() || dirContext == null || groupSuffix == null)
             return null;
         ArrayList<People> peopleArrayList = new ArrayList<>();
         String searchbase = "cn=" + fio + "*";// + "*," + base;
@@ -194,12 +194,12 @@ public class LdapUtils {
 
                 StringBuilder rootDepartment = null;
 
-                if (attr.get("memberOf") != null) {
+                if (!department.isEmpty() && attr.get("memberOf") != null) {
                     NamingEnumeration<?> memberOf = attr.get("memberOf").getAll();
                     while (memberOf.hasMore()) {
                         String group = (String) memberOf.next();
                         int start;
-                        if ((start = group.indexOf(department)) >= 0) {
+                        if ((start = group.indexOf("OU=" + department)) >= 0) {
                             StringBuilder str = new StringBuilder(group.substring(start, group.indexOf(groupSuffix)-1));
                             rootDepartment = new StringBuilder(str.substring(str.lastIndexOf("OU=")+3));
                         }
@@ -222,7 +222,7 @@ public class LdapUtils {
             }
 
         } catch (NamingException e) {
-            logger.info("[find] not found fio: {}", fio);
+            logger.info("[find] NamingException (ignored) fio: {}", fio);
         } catch (Exception e) {
             logger.error("[find] exception: {}", fio, e);
         }
