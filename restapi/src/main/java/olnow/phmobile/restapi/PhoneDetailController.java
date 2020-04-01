@@ -2,8 +2,8 @@ package olnow.phmobile.restapi;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.EnableAsync;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import olnow.phmobile.PhoneDetailServices;
@@ -11,16 +11,16 @@ import olnow.phmobile.PhoneDetailServices;
 import java.util.concurrent.CompletableFuture;
 
 @Controller
-@EnableAsync
+// @EnableAsync
 class PhoneDetailController {
     private static final Logger logger = LoggerFactory.getLogger(PhoneDetailController.class);
     private PhoneDetailServices phoneDetailServices = new PhoneDetailServices();
     private boolean stopAnalizeProcess = false;
     private CompletableFuture<Object[]> result;
 
-    @Autowired
-    private
-    TestAsync testAsync;
+    // @Autowired
+    // private
+    // TestAsync testAsync;
 
     @RequestMapping("/analizePhoneDetailTariffsMonth")
     @ResponseBody
@@ -50,6 +50,7 @@ class PhoneDetailController {
         return res;
     }
 
+    /*
     @RequestMapping("/getDetailAnalizeYearFuture")
     @ResponseBody
     private CompletableFuture<Object[]> getDetailAnalizeYearFuture(@RequestParam(value = "year", required = true) int year) throws Exception {
@@ -84,6 +85,7 @@ class PhoneDetailController {
         res.setProgress(i);
         return res;
     }
+    */
 
     @RequestMapping("/getDetailAnalizeProgress")
     @ResponseBody
