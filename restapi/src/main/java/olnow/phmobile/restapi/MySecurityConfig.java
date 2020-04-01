@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 
 @Configuration
 @EnableWebSecurity(debug = false)
@@ -97,6 +99,21 @@ class MySecurityConfig extends WebSecurityConfigurerAdapter {
             }
 
             clearAuthenticationAttributes(request);
+            addSameSiteCookieAttribute(response);
+
+        }
+
+        private void addSameSiteCookieAttribute(HttpServletResponse response) {
+            Collection<String> headers = response.getHeaders(HttpHeaders.SET_COOKIE);
+            boolean firstHeader = true;
+            for (String header : headers) { // there can be multiple Set-Cookie attributes
+                if (firstHeader) {
+                    response.setHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=Strict"));
+                    firstHeader = false;
+                    continue;
+                }
+                response.addHeader(HttpHeaders.SET_COOKIE, String.format("%s; %s", header, "SameSite=Strict"));
+            }
         }
 
         public void setRequestCache(RequestCache requestCache) {
