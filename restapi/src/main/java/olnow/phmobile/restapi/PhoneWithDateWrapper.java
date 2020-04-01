@@ -3,8 +3,8 @@ package olnow.phmobile.restapi;
 import olnow.phmobile.Phones;
 
 class PhoneWithDateWrapper {
-    Phones phone;
-    String datestart;
+    private Phones phone;
+    private String datestart;
 
     public Phones getPhone() {
         return phone;
