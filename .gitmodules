@@ -1,6 +1,6 @@
-[submodule "frontend/build"]
-	path = frontend/build
-	url = https://github.com/olnow/phmobile.latest
 [submodule "frontend/dist"]
 	path = frontend/dist
+	url = https://github.com/olnow/phmobile.latest
+[submodule "frontend/build"]
+	path = frontend/build
 	url = https://github.com/olnow/phmobile.latest
