@@ -32,6 +32,39 @@
     <template v-slot:cell(3)="data">
       <b class="text-info" >{{ data.value.toFixed(2) }}</b>
     </template>
+    <template v-slot:cell(adjust)="data">
+      <b-button size="sm" variant="outline-light" @click="adjustCash(data)">
+        <img src="@/assets/icons8-expand-arrow-40.png" width="15px;">
+      </b-button>
+      <b-modal 
+        ref="bv-modal-adjustCash" 
+        :title="data.item[0] + ': ' + data.item[1]"
+        @ok="adjustCashOk"
+      >
+        <div class="d-block text-center">
+          <h5>Укажите сумму корректировки:</h5>
+        </div>
+        <b-input-group>
+          <b-form-select :options="adjustOptions" v-model="adjustSelected">
+          </b-form-select>
+          <b-input-group-append>
+            <b-button size="sm" variant="outline-light" @click="addAdjust()">
+              <img src="@/assets/icons8-expand-arrow-40.png" width="15px;">
+            </b-button>
+          </b-input-group-append>
+        </b-input-group>
+        <!-- input fields with values-->
+        <div class="adjustValues">
+          <div v-for="(value, key) in adjustSelectedOptions">
+            <label :for="key">{{ getLabel(key) }}</label>
+            <b-form-input :id="key" v-model="adjustCashValues[key]"></b-form-input>
+          </div>
+          <div>
+            <label>Сумма: {{ cashSum }}</label>
+          </div>
+        </div>
+      </b-modal>
+    </template>
   </b-table>
 </div>
 </template>
@@ -40,12 +73,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { postRestApi } from '../http-common'
-import BootstrapVue from 'bootstrap-vue'
+import { BootstrapVue, ModalPlugin } from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import JsonCSV from 'vue-json-csv'
+import PhoneCash from './PhoneCash'
+// import { ModalPlugin } from 'bootstrap-vue'
 
 Vue.use(BootstrapVue)
+Vue.use(ModalPlugin)
 
 export default {
   data () {
@@ -53,13 +89,40 @@ export default {
       fields: [ { key: '0', label: 'Телефон', sortable: true },
         { key: '1', label: 'ФИО', sortable: true },
         { key: '2', label: 'Подразделение', sortable: true },
-        { key: '3', label: 'Сумма, руб \n(без налогов)', sortable: true } ],
+        { key: '3', label: 'Сумма, руб \n(без налогов)', sortable: true },
+        { key: 'adjust', label: '' } ],
       csvlabels: {
         'phone': 'Телефон',
         'fio': 'ФИО',
         'department': 'Подразделение',
         'sum': 'Сумма, руб (без налогов)'
       },
+      adjustOptions: [
+        { key: 'internationalcalls', value: 'internationalcalls', text: 'Международные вызовы' },
+        { key: 'longcalls', value: 'longcalls', text: 'Междугородные вызовы' },
+        { value: 'localcalls', text: '' },
+        { value: 'localsms', text: '' },
+        { value: 'gprs', text: 'Интернет' },
+        { value: 'internationalroamingcalls', text: '' },
+        { value: 'internationalroamingsms', text: '' },
+        { value: 'internationalgprsroaming', text: '' },
+        { value: 'internationalroamingcash', text: '' },
+        { value: 'russiaroamingcalls', text: '' },
+        { value: 'russiaroamingsms', text: '' },
+        { value: 'russiaroaminginet', text: '' },
+        { value: 'russiaroamingtraffic', text: '' },
+        { value: 'subscriptionfee', text: '' },
+        { value: 'subscriptionfeeaddon', text: '' },
+        { value: 'discounts', text: '' },
+        { value: 'onetime', text: '' },
+        { value: 'sum', text: 'SUM' },
+        { value: 'vat', text: '' },
+        { value: 'fullsum', text: '' }
+      ],
+      adjustSelectedOptions: {},
+      adjustSelected: '',
+      adjustCashValues: null,
+      adjustPhone: '',
       posts: [],
       errors: [],
       selectedyear: this.getLastYear(),
@@ -68,7 +131,12 @@ export default {
       exportTemplate: 'phone,fio,department,sum',
       exportTypes: { 'sum': 'double' },
       sortBy: '3',
-      exportSkipZero: true
+      exportSkipZero: true,
+      infoModal: {
+        id: 'info-modal',
+        title: '',
+        content: ''
+      }
     }
   },
   watch: {
@@ -91,6 +159,18 @@ export default {
     months () {
       // const month = 12
       return Array.from({ length: 12 }, (value, index) => 1 + index)
+    },
+    cashSum () {
+      // console.log(this.adjustSelectedOptions, Object.keys(this.adjustSelectedOptions))
+      let sum = 0
+      // let keys = Object.keys(this.adjustSelectedOptions)
+      if (this.adjustSelectedOptions && Object.keys(this.adjustSelectedOptions)) {
+        for (var el in this.adjustSelectedOptions) {
+          sum += parseInt(this.adjustCashValues[el])
+          // console.log(sum)
+        }
+      }
+      return sum
     }
   },
   mounted () {
@@ -169,6 +249,44 @@ export default {
       formData.append('year', this.selectedyear)
       formData.append('month', this.selectedmonth)
       postRestApi('sendCashToEMail', formData)
+    },
+    adjustCash (item) {
+      if (!this.adjustCashValues) {
+        // this.adjustCashValues = new PhoneCash({ phone: item[0], people: item[1], month: this.selectedmonth })
+        this.adjustPhone = item[0]
+        this.adjustCashValues = new PhoneCash()
+      }
+      this.$refs['bv-modal-adjustCash'].show()
+    },
+    hideModal (id) {
+      this.$refs[id].hide()
+    },
+    addAdjust () {
+      if (this.adjustSelected === '') return
+      // if (!this.adjustSelectedOptions.sum) {
+      //   this.$set(this.adjustSelectedOptions, 'sum', 0)
+      // }
+      this.$set(this.adjustSelectedOptions, this.adjustSelected, 0)
+    },
+    getLabel (key) {
+      var keys = Object.keys(this.adjustOptions)
+      for (var k = 0; k < keys.length; k++) {
+        // console.log(this.adjustOptions[k].value, key)
+        if (this.adjustOptions[k].value === key) {
+          return this.adjustOptions[k].text
+        }
+      }
+      return ''
+    },
+    adjustCashOk () {
+      this.adjustCashValues.sum = this.cashSum
+      // console.log(this.adjustCashValues)
+      let formData = new FormData()
+      formData.append('year', this.selectedyear)
+      formData.append('month', this.selectedmonth)
+      formData.append('phone', this.adjustPhone)
+      formData.append('phonecash', this.adjustCashValues)
+      postRestApi('cash/adjustPhoneCash', formData)
     }
   },
   components: {
