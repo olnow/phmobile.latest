@@ -404,7 +404,7 @@ export default {
           this.detailrow.item.people.account = this.selectPeople.account
           this.detailrow.item.people.adstate = this.selectPeople.adstate
           this.detailrow.item.people.people = this.selectPeople.people
-          console.log(this.detailrow.item.people)
+          // console.log(this.detailrow.item.people)
         }
         this.findPeople = false
       }
@@ -430,7 +430,7 @@ export default {
   mixins: [formatRow, searchFilter],
   mounted () {
     // console.log('mounted phonelist: ', this.$store.getters['PhoneListStore/getPhoneList'])
-    console.log(this.filter, this.searchFilter)
+    // console.log(this.filter, this.searchFilter)
     if (!this.phoneList || !this.phoneList.length) {
       // this.$store.dispatch('PhoneListStore/loadPhoneList')
       this.loadPhoneList()
