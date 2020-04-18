@@ -33,11 +33,11 @@
       <b class="text-info" >{{ data.value.toFixed(2) }}</b>
     </template>
     <template v-slot:cell(adjust)="data">
-      <b-button size="sm" variant="outline-light" @click="adjustCash(data)">
+      <b-button size="sm" variant="outline-light" @click="adjustCash(data.item)">
         <img src="@/assets/icons8-expand-arrow-40.png" width="15px;">
       </b-button>
-      <b-modal 
-        ref="bv-modal-adjustCash" 
+      <b-modal
+        ref="bv-modal-adjustCash"
         :title="data.item[0] + ': ' + data.item[1]"
         @ok="adjustCashOk"
       >
@@ -54,7 +54,7 @@
           </b-input-group-append>
         </b-input-group>
         <!-- input fields with values-->
-        <div class="adjustValues">
+        <div v-if="adjustCashValues" class="adjustValues">
           <div v-for="(value, key) in adjustSelectedOptions">
             <label :for="key">{{ getLabel(key) }}</label>
             <b-form-input :id="key" v-model="adjustCashValues[key]"></b-form-input>
@@ -162,11 +162,11 @@ export default {
     },
     cashSum () {
       // console.log(this.adjustSelectedOptions, Object.keys(this.adjustSelectedOptions))
-      let sum = 0
+      let sum = 0.0
       // let keys = Object.keys(this.adjustSelectedOptions)
       if (this.adjustSelectedOptions && Object.keys(this.adjustSelectedOptions)) {
         for (var el in this.adjustSelectedOptions) {
-          sum += parseInt(this.adjustCashValues[el])
+          sum += parseFloat(this.adjustCashValues[el])
           // console.log(sum)
         }
       }
@@ -175,7 +175,7 @@ export default {
   },
   mounted () {
     // console.log('mounted phonelist: ', this.$store.getters['PhoneListStore/getPhoneList'])
-    if (!this.cashMonth.length) {
+    if (!this.cashMonth) {
       // this.$store.dispatch('PhoneListStore/loadPhoneList')
       this.getCashMonth()
     }
@@ -253,9 +253,11 @@ export default {
     adjustCash (item) {
       if (!this.adjustCashValues) {
         // this.adjustCashValues = new PhoneCash({ phone: item[0], people: item[1], month: this.selectedmonth })
-        this.adjustPhone = item[0]
+        // this.adjustPhone = item[0]
         this.adjustCashValues = new PhoneCash()
       }
+      this.adjustPhone = item[0]
+      console.log(item, this.adjustPhone)
       this.$refs['bv-modal-adjustCash'].show()
     },
     hideModal (id) {
@@ -280,13 +282,16 @@ export default {
     },
     adjustCashOk () {
       this.adjustCashValues.sum = this.cashSum
-      // console.log(this.adjustCashValues)
+      this.adjustCashValues.fullsum = this.cashSum
+      // console.log(this.adjustPhone)
       let formData = new FormData()
       formData.append('year', this.selectedyear)
       formData.append('month', this.selectedmonth)
       formData.append('phone', this.adjustPhone)
-      formData.append('phonecash', this.adjustCashValues)
+      formData.append('phonecash', JSON.stringify(this.adjustCashValues))
       postRestApi('cash/adjustPhoneCash', formData)
+      this.adjustCashValues = null
+      // adjustSelectedOptions = {}
     }
   },
   components: {
