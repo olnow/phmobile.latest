@@ -1,12 +1,9 @@
 export default class PhoneCash {
-  getValueOrZero (value) {
-    return value || 0
-  }
-
   constructor (options) {
-    this.phone = options.phone
-    this.people = options.people
-    this.month = options.month
+    if (!options) options = {}
+    this.phone = options.phone || null
+    this.people = options.people || null
+    this.month = options.month || null
     this.internationalcalls = options.internationalcalls || 0
     this.longcalls = options.longcalls || 0
     this.localcalls = options.localcalls || 0
