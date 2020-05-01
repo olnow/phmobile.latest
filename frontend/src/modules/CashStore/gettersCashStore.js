@@ -13,3 +13,11 @@ export function getCashYear (state) {
 export function getCashYearDepart (state) {
   return state.cashYearDepart
 }
+
+export function getSelectedMonth (state) {
+  return state.selectedMonth
+}
+
+export function getSelectedYear (state) {
+  return state.selectedYear
+}
