@@ -17,7 +17,9 @@ export const CASH_MUTATIONS = {
   MUTATION_LOADPHONESCASH: 'loadPhonesCash',
   MUTATION_LOADCASHMONTH: 'loadCashMonth',
   MUTATION_LOADCASHYEAR: 'loadCashYear',
-  MUTATION_LOADCASH_YEAR_DEPART: 'loadCashYearDepartment'
+  MUTATION_LOADCASH_YEAR_DEPART: 'loadCashYearDepartment',
+  SET_SELECTED_MONTH: 'setSelectedMonth',
+  SET_SELECTED_YEAR: 'setSelectedYear'
 }
 
 export const IMPORT_MUTATIONS = {
