@@ -65,6 +65,17 @@ export async function loadCashDetail ({ commit, state }, sendData) {
     // return null
   }
 }
+
+export function setSelectedMonth ({ commit }, data) {
+  commit(CASH_MUTATIONS.SET_SELECTED_MONTH, data)
+  localStorage.cashSelectedMonth = data
+}
+
+export function setSelectedYear ({ commit }, data) {
+  commit(CASH_MUTATIONS.SET_SELECTED_YEAR, data)
+  localStorage.cashSelectedYear = data
+}
+
 /*
 export async function callRestGet (request) {
   try {
