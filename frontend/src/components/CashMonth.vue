@@ -26,21 +26,16 @@
                           <img src="@/assets/icons8-export-csv-30.png">
       </JsonCSV>
       <b-btn size="sm" @click="sendToEMail()">Отправить по почте</b-btn>
+      <div v-if="timer" class="resultMessage p-1"  :class="requestResultClass">
+        {{ requestResult }}
+      </div>
   </b-navbar>
   <p/>
-  <b-table :items="cashMonth" :fields="fields" :small="true" :sort-by="sortBy" :sort-desc="true" selectable selected-variant="active" select-mode="single">
-    <template v-slot:cell(3)="data">
-      <b class="text-info" >{{ data.value.toFixed(2) }}</b>
-    </template>
-    <template v-slot:cell(adjust)="data">
-      <b-button size="sm" variant="outline-light" @click="adjustCash(data.item)">
-        <img src="@/assets/icons8-expand-arrow-40.png" width="15px;">
-      </b-button>
-      <b-modal
-        ref="bv-modal-adjustCash"
-        :title="data.item[0] + ': ' + data.item[1]"
-        @ok="adjustCashOk"
-      >
+  <b-modal
+    ref="bv-modal-adjustCash"
+    :title="adjustPhone + ': ' + adjustFIO"
+    @ok="adjustCashOk"
+  >
         <div class="d-block text-center">
           <h5>Укажите сумму корректировки:</h5>
         </div>
@@ -64,6 +59,19 @@
           </div>
         </div>
       </b-modal>
+  <b-table :items="cashMonth" :fields="fields" :small="true" :sort-by="sortBy" :sort-desc="true" selectable selected-variant="active" select-mode="single">
+    <template v-slot:cell(3)="data">
+      <b class="text-info" >{{ data.value.toFixed(2) }}</b>
+    </template>
+    <template v-slot:cell(adjust)="data">
+      <b-button size="sm" variant="outline-light" @click="adjustCash(data.item)">
+        <img src="@/assets/icons8-expand-arrow-40.png" width="15px;">
+      </b-button>
+      <!--b-modal
+        :ref="'bv-modal-adjustCash-' + data.item[0]"
+        :title="data.item[0] + ': ' + data.item[1]"
+        @ok="adjustCashOk"
+      -->
     </template>
   </b-table>
 </div>
@@ -100,33 +108,36 @@ export default {
       adjustOptions: [
         { key: 'internationalcalls', value: 'internationalcalls', text: 'Международные вызовы' },
         { key: 'longcalls', value: 'longcalls', text: 'Междугородные вызовы' },
-        { value: 'localcalls', text: '' },
-        { value: 'localsms', text: '' },
+        { value: 'localcalls', text: 'Местные вызовы' },
+        { value: 'localsms', text: 'Местные смс' },
         { value: 'gprs', text: 'Интернет' },
-        { value: 'internationalroamingcalls', text: '' },
-        { value: 'internationalroamingsms', text: '' },
-        { value: 'internationalgprsroaming', text: '' },
-        { value: 'internationalroamingcash', text: '' },
-        { value: 'russiaroamingcalls', text: '' },
-        { value: 'russiaroamingsms', text: '' },
-        { value: 'russiaroaminginet', text: '' },
-        { value: 'russiaroamingtraffic', text: '' },
-        { value: 'subscriptionfee', text: '' },
-        { value: 'subscriptionfeeaddon', text: '' },
-        { value: 'discounts', text: '' },
-        { value: 'onetime', text: '' },
-        { value: 'sum', text: 'SUM' },
-        { value: 'vat', text: '' },
-        { value: 'fullsum', text: '' }
+        { value: 'internationalroamingcalls', text: 'Вызовы в МН роуминге' },
+        { value: 'internationalroamingsms', text: 'СМС в МН роуминге' },
+        { value: 'internationalgprsroaming', text: 'Интернет в МН роуминге' },
+        { value: 'internationalroamingcash', text: 'Начисления в МН роуминге' },
+        { value: 'russiaroamingcalls', text: 'Вызовы в МГ роуминге' },
+        { value: 'russiaroamingsms', text: 'СМС в МГ роуминге' },
+        { value: 'russiaroaminginet', text: 'Интернет в МГ роуминге' },
+        { value: 'russiaroamingtraffic', text: 'Трафик в МГ роуминге' },
+        { value: 'subscriptionfee', text: 'Абонентская плата' },
+        { value: 'subscriptionfeeaddon', text: 'Абонентская плата (доп. усл.)' },
+        { value: 'discounts', text: 'Скидки' },
+        { value: 'onetime', text: 'One time' },
+        { value: 'sum', text: 'Сумма' },
+        { value: 'vat', text: 'Налоги' },
+        { value: 'fullsum', text: 'Полная сумма' }
       ],
       adjustSelectedOptions: {},
       adjustSelected: '',
       adjustCashValues: null,
       adjustPhone: '',
+      adjustFIO: '',
+      requestResult: '',
+      timer: 0,
       posts: [],
       errors: [],
-      selectedyear: this.getLastYear(),
-      selectedmonth: this.getLastMonth(),
+      selectedyear: 0,
+      selectedmonth: 0,
       exportCashMonth: [],
       exportTemplate: 'phone,fio,department,sum',
       exportTypes: { 'sum': 'double' },
@@ -150,7 +161,9 @@ export default {
   },
   computed: {
     ...Vuex.mapGetters({
-      cashMonth: 'CashStore/getCashMonth'
+      cashMonth: 'CashStore/getCashMonth',
+      getSelectedMonth: 'CashStore/getSelectedMonth',
+      getSelectedYear: 'CashStore/getSelectedYear'
     }),
     years () {
       const year = new Date().getFullYear()
@@ -171,11 +184,17 @@ export default {
         }
       }
       return sum
+    },
+    requestResultClass () {
+      return 'bg-' + this.requestResult
     }
   },
   mounted () {
     // console.log('mounted phonelist: ', this.$store.getters['PhoneListStore/getPhoneList'])
-    if (!this.cashMonth) {
+    this.selectedmonth = this.getSelectedMonth || this.getLastMonth()
+    this.selectedyear = this.getSelectedYear || this.getLastYear()
+    // console.log('mounted: ', this.getSelectedMonth, this.getSelectedYear, this.selectedmonth, this.getSelectedMonth || 4)
+    if (!this.cashMonth || !this.cashMonth.length) {
       // this.$store.dispatch('PhoneListStore/loadPhoneList')
       this.getCashMonth()
     }
@@ -203,10 +222,14 @@ export default {
       }
     },
     getCashMonth () {
+      // console.log('getCashMonth: ', this.selectedmonth, this.selectedyear, this.getSelectedMonth, this.getSelectedYear)
       let formData = new FormData()
       formData.append('year', this.selectedyear)
+      this.$store.dispatch('CashStore/setSelectedMonth', this.selectedmonth)
+      this.$store.dispatch('CashStore/setSelectedYear', this.selectedyear)
       formData.append('month', this.selectedmonth)
       this.$store.dispatch('CashStore/loadCashMonth', formData)
+      this.showOKMessage(3)
     },
     generateExportCashMonth (source, template, types, skipZero) {
       if (!template || !source) {
@@ -257,7 +280,8 @@ export default {
         this.adjustCashValues = new PhoneCash()
       }
       this.adjustPhone = item[0]
-      console.log(item, this.adjustPhone)
+      this.adjustFIO = item[1]
+      // console.log(item, this.adjustPhone, this.$refs)
       this.$refs['bv-modal-adjustCash'].show()
     },
     hideModal (id) {
@@ -280,6 +304,23 @@ export default {
       }
       return ''
     },
+    startTimer (time) {
+      this.timer = time
+    },
+    countDownTimer () {
+      if (this.timer) {
+        // console.log(this.timer)
+        return setTimeout(() => {
+          --this.timer
+          this.countDownTimer()
+        }, 1000)
+      }
+    },
+    showOKMessage (time) {
+      this.requestResult = 'success'
+      this.startTimer(time)
+      this.countDownTimer()
+    },
     adjustCashOk () {
       this.adjustCashValues.sum = this.cashSum
       this.adjustCashValues.fullsum = this.cashSum
@@ -290,8 +331,15 @@ export default {
       formData.append('phone', this.adjustPhone)
       formData.append('phonecash', JSON.stringify(this.adjustCashValues))
       postRestApi('cash/adjustPhoneCash', formData)
+        .then(res => {
+          if (res && res.data && res.data.idphonecash) {
+            // this.showOKMessage(20)
+            this.getCashMonth()
+            // console.log(res.data)
+          }
+        })
       this.adjustCashValues = null
-      // adjustSelectedOptions = {}
+      // this.adjustSelectedOptions = {}
     }
   },
   components: {
