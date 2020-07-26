@@ -1,5 +1,6 @@
 package olnow.phmobile.restapi;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ import java.util.Calendar;
 class PhoneCashController {
     private PhoneCashServices phoneCashServices = new PhoneCashServices();
     private PhonesMobileLog phonesMobile = new PhonesMobileLog();
+    private PhonesServices phonesServices = new PhonesServices();
+    private HistoryServices historyServices = new HistoryServices();
+    private PeopleServices peopleServices = new PeopleServices();
     private ImportHistoryServices importHistoryServices = new ImportHistoryServices();
     private boolean stopUploadProcess = false;
     private Logger logger = LoggerFactory.getLogger(PhoneCashController.class);
@@ -328,7 +332,35 @@ class PhoneCashController {
         //return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
     }
 
-    @ExceptionHandler(Exception.class)
+    @RequestMapping(value = "/cash/adjustPhoneCash")
+    @ResponseBody
+    ResponseEntity fileUploadPhoneDetail(@RequestParam(value = "year", required = true) Integer year,
+                                         @RequestParam(value = "month", required = true) Integer month,
+                                         @RequestParam(value = "phone") String phone,
+                                         @RequestParam(value = "phonecash") PhoneCash phoneCash) throws Exception {
+        //ResponseEntity fileUploadPhoneDetail(@RequestParam("file") MultipartFile file) {
+        // System.out.println("fileUploadPhoneDetail:" + file.getOriginalFilename() + ":" + file.getSize());
+        logger.info("[/cash/adjustPhoneCash] year: {}, month: {}, phone: {}",
+                year, month, phone);
+        // Timestamp monthTimestamp = new Timestamp();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(year, month-1, 1);
+        phoneCash.setPhone(phonesServices.findPhone(phone));
+        if (phoneCash.getPhone() == null) {
+            logger.info("[/cash/adjustPhoneCash] Not found phone");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        Timestamp monthTS = new Timestamp(calendar.getTime().getTime());
+        phoneCash.setPeople(historyServices.getPeopleAtDate(phoneCash.getPhone(), monthTS));
+
+        phoneCash.setMonth(monthTS);
+        phoneCashServices.addPhoneCash(phoneCash);
+
+        return ResponseEntity.status(HttpStatus.OK).body(phoneCash);
+    }
+
+
+        @ExceptionHandler(Exception.class)
     public void handleException(Exception e) {
         System.out.println("Spring exception: " + e.toString());
         logger.error("[Spring exception]", e);
