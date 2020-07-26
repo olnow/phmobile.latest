@@ -41,15 +41,15 @@
                   <b-navbar-nav class="ml-auto" right>
                   <b-nav-form>
                     <!--b-button size="sm" class="my-2 my-sm-0"-->
-                      <!-- JsonCSV
-                        :data = "simplePhoneList"
+                      <JsonCSV
+                        :data = "simpleHistory"
                         delimiter = ";"
-                        name = "phoneList.csv"
+                        name = "historyPHList.csv"
                         :bom = true
                       >
                           <img src="@/assets/icons8-export-csv-30.png">
                       </JsonCSV>
-                    </b-button-->
+                    <!--/b-button-->
                   </b-nav-form>
                   </b-navbar-nav>
                   </b-navbar>
@@ -151,6 +151,7 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { formatRow, searchFilter } from '../utils'
+import JsonCSV from 'vue-json-csv'
 
 Vue.use(BootstrapVue)
 
@@ -174,9 +175,13 @@ export default {
         { value: 'all', text: 'Все' }
       ],
       // filter: '',
-      tagsSelected: []
+      tagsSelected: [],
+      simpleHistory: []
       // complexFilter: ',' + this.filterSelected
     }
+  },
+  components: {
+    JsonCSV
   },
   computed: {
     ...Vuex.mapGetters({
@@ -188,6 +193,9 @@ export default {
     }
   },
   watch: {
+    historyCashAnalize: function () {
+      this.generateSimpleHistory()
+    }
   },
   mounted () {
     if (!this.historyCashAnalize || !this.historyCashAnalize.length) {
@@ -362,6 +370,72 @@ export default {
         res += element.name + ' (' + element.code + ')'
       })
       return res
+    },
+    toLocalDate (date) {
+      if (!date) {
+        return ''
+      }
+      let dt = new Date(date)
+      let options = { year: 'numeric', month: 'long' }
+      // return dt.toLocaleDateString('ru-RU', options)
+      return dt.toLocaleDateString()
+    },
+    convertDoubleToComma (val) {
+      if (val) {
+        return val.toString().replace('.', ',')
+      }
+      return 0
+    },
+    generateSimpleHistory () {
+      // console.log(this.historyCashAnalize)
+      if (this.historyCashAnalize && this.historyCashAnalize.length > 0) {
+        let array = []
+        // console.log(this.historyCashAnalize)
+        this.historyCashAnalize.forEach(element => {
+          // console.log(element[1])
+          let phone = element[0]
+          let people
+          let history = element[1]
+          let phonenum = phone.phone
+          let fio
+          let department
+          let position
+          let duration
+          if (history && history.people) people = history.people
+          let state = this.getStateName(phone.state)
+          let service = this.printServices(phone.services)
+          if (history) duration = this.countDuration(history.datestart, history.dateend)
+          // if (phone['people']) {
+          //   fio = phone['people']['fio']
+          //   department = phone['people']['department']
+          //   position = phone['people']['position']
+          // } // else if (this.filterEmptyPeople) {
+          //   return
+          // }
+          if (people && people.fio) {
+            fio = people.fio
+            department = people.department
+            position = people.position
+          }
+          array.push({
+            phone: phonenum,
+            fio: fio,
+            department: department,
+            position: position,
+            datestart: history ? this.toLocalDate(history.datestart): '',
+            dateend: history ? this.toLocalDate(history.dateend): '',
+            state: state,
+            service: service,
+            duration: duration,
+            month: this.convertDoubleToComma(element[2]),
+            six_month: this.convertDoubleToComma(element[3]),
+            year: this.convertDoubleToComma(element[4])
+          })
+        })
+        this.simpleHistory = array
+      } else {
+        this.simpleHistory = []
+      }
     }
   }
 }
