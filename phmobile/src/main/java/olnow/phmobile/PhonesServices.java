@@ -22,9 +22,12 @@ public class PhonesServices {
     public Phones findPhoneById(int id) {
         return this.phones.findPhone(id);
     }
+
+    @Deprecated
     public Phones findPhonesByPhone(String phone) {
         return this.phones.findPhone(phone);
     }
+
     public void setTemplateSeparator(String separator) { this.templateseparator = separator; }
     public String getTemplateSeparator() {return templateseparator; }
     public Phones findPhone(String phone) { return phones.findPhone(phone); }

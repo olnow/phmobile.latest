@@ -132,6 +132,10 @@ public class PhoneCash {
         this.sum = sum;
     }
 
+    public int getIdphonecash() {
+        return idphonecash;
+    }
+
     public Phones getPhone() {
         return phone;
     }
