@@ -1,13 +1,21 @@
 package olnow.phmobile;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+@Repository
 public class HistoryServices {
    private HistoryDAO history = new HistoryDAO();
    //PhonesServices phonesSrvc = new PhonesServices();
    private HistoryTypeServices historyTypeSrvc = new HistoryTypeServices();
+
+   @Autowired
+   IServiceServices serviceServices;
 
    public ArrayList<History> getAllHistory() {
        return this.history.getHistory();
@@ -46,7 +54,7 @@ public class HistoryServices {
    public ArrayList<Object> getLastHistoryWithCashAnalizeAndServices() {
       ArrayList<Object> ph = getLastHistoryWithCashAnalize();
       if (ph != null) {
-         ServiceServices serviceServices = new ServiceServices();
+         // ServiceServices serviceServices; // = new ServiceServices();
          ph.forEach(o -> {
             Object[] array = (Object[]) o;
             if (array[0] != null)
