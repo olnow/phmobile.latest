@@ -3,20 +3,39 @@ package olnow.phmobile;
 import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
+import javax.annotation.Resources;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class ServiceServices implements RootServicesInterface {
-    ServiceDAO serviceRootDAO = new ServiceDAO();
+@Repository
+@Qualifier("ServiceServices")
+public class ServiceServices extends RootServiceImpl<Service> implements IServiceServices {
+    // ServiceDAO serviceRootDAO = new ServiceDAO();
+    // @Autowired
+
+    // @Autowired
+    IServiceDAO<Service> serviceRootDAO;
+
     PhonesServices phonesServices = new PhonesServices();
     Logger logger = LoggerFactory.getLogger(ServiceServices.class);
 
-    @Override
-    public RootDAO getRootDAO() {
-        return serviceRootDAO;
+    //@Override
+    //public RootDAO getRootDAO() {
+    //    return serviceRootDAO;
+    //}
+
+    @Autowired
+    ServiceServices(IServiceDAO<Service> rootDAO) {
+        super(rootDAO);
+        serviceRootDAO = (ServiceDAO) rootDAO;
     }
 
     public Service find(Phones phones, String name, String code) {
@@ -60,7 +79,7 @@ public class ServiceServices implements RootServicesInterface {
         } else {
             logger.error("Empty import data for service: {} ", maps.get("phone"));
             throw new NotFoundException("Empty import data for service: " + maps.get("phone"));
-        };
+        }
         Timestamp dateStart, dateEnd;
         if (maps.get("tariff_date_start") != null && !maps.get("tariff_date_start").isEmpty()) {
             try {

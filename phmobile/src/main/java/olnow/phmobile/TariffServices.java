@@ -1,5 +1,10 @@
 package olnow.phmobile;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+
 import java.util.ArrayList;
 
 /*
@@ -16,20 +21,29 @@ public class TariffServices extends RootServices<Tariff> {
     }
 }*/
 
-public class TariffServices implements RootServicesInterface<Tariff> {
-    private TariffDAO rootDAO = new TariffDAO();
+@Repository
+@Qualifier("TariffServices")
+public class TariffServices extends RootServiceImpl<Tariff> implements IRootService<Tariff> {
+    // private IRootDAO rootTariffDAO; // = new TariffDAO();
 
-    @Override
-    public TariffDAO getRootDAO() {
-        return rootDAO;
+    @Autowired
+    TariffServices(TariffDAO rootDAO) {
+        super(rootDAO);
+        // rootTariffDAO = rootDAO;
     }
 
+    //@Override
+    // public TariffDAO getRootDAO() {
+    //    return rootDAO;
+    //}
+
+    /*
     @Override
     public ArrayList<Tariff> get() {
-        return getRootDAO().get();
+        return rootDAO.get();
     }
 
     public ArrayList<Tariff> getSorted() {
-        return getRootDAO().getSorted();
-    }
+        return rootDAO.get(Tariff_.name);
+    }*/
 }
