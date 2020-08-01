@@ -2,6 +2,10 @@ package olnow.phmobile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -10,8 +14,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@Repository
 public class PhoneCashServices {
-    PhoneCashDAO phoneCashDAO = new PhoneCashDAO();
+    @Autowired
+    PhoneCashDAO phoneCashDAO; // = new PhoneCashDAO();
+
     PhonesServices phonesServices = new PhonesServices();
     HistoryServices historyServices = new HistoryServices();
     Logger logger = LoggerFactory.getLogger(PhoneCashServices.class);

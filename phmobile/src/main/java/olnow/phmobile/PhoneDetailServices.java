@@ -11,19 +11,29 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 
 import static java.lang.Math.*;
 
+@Repository
 public class PhoneDetailServices {
     private PhoneDetailDAO phoneDetailDAO = new PhoneDetailDAO();
     private PhonesServices phonesServices = new PhonesServices();
+    @Autowired
     private HistoryServices historyServices = new HistoryServices();
     private CallCategoryServices callCategoryServices = new CallCategoryServices();
     private DescriptionServices descriptionServices = new DescriptionServices();
     private RoamingServices roamingServices = new RoamingServices();
-    private TariffServices tariffServices = new TariffServices();
-    private PhoneCashServices phoneCashServices = new PhoneCashServices();
+
+    @Autowired
+    @Qualifier("TariffServices")
+    private IRootService tariffServices; // = new TariffServices();
+    @Autowired
+    private PhoneCashServices phoneCashServices; // = new PhoneCashServices();
     private Phones phone = null;
     private People people = null;
     private Timestamp olddate = null;
@@ -520,7 +530,7 @@ public class PhoneDetailServices {
         progress = 10;
         int position =0;
         boolean newphone = true;
-        ArrayList<Tariff> tariffs = tariffServices.getSorted();
+        ArrayList<Tariff> tariffs = tariffServices.get();
         if (tariffs == null)
             return null;
         //System.out.println(tariffs.size());

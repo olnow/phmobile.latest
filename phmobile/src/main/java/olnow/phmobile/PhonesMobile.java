@@ -3,6 +3,9 @@ package olnow.phmobile;
 import com.linuxense.javadbf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.lang.reflect.Method;
@@ -14,6 +17,7 @@ import java.util.Date;
 
 import static java.lang.StrictMath.round;
 
+@Repository
 public class PhonesMobile {
     private PhonesServices phones = new PhonesServices();
     private PeopleServices people = new PeopleServices();
@@ -32,6 +36,9 @@ public class PhonesMobile {
     private String charset = null;
     private boolean csvBom = false;
     private boolean updateMonthInfo = true;
+
+    @Autowired
+    IServiceServices serviceServices;
 
     public String getTemplate() {
         return phonesTemplate;
@@ -477,7 +484,7 @@ public class PhonesMobile {
     }
 
     public ReadFileResult readServicesCSV(InputStream csvStream, String templateName) {
-        ServiceServices serviceServices = new ServiceServices();
+        // ServiceServices serviceServices = new ServiceServices();
         return readCSV(csvStream, serviceServices, "addService", "phonesTariff");
     }
 

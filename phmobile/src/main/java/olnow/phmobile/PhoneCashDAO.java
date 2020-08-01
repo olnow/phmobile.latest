@@ -2,7 +2,11 @@ package olnow.phmobile;
 
 import org.hibernate.Session;
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.persistence.NoResultException;
 import javax.persistence.criteria.*;
 import java.sql.Timestamp;
@@ -10,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
+@Repository
 public class PhoneCashDAO {
 
     public void addPhoneCash(PhoneCash phoneCash) {
