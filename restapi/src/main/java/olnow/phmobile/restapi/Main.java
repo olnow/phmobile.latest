@@ -17,8 +17,8 @@ import olnow.phmobile.HibernateSessionFactoryUtil;
 //extends SpringBootServletInitializer
 @SpringBootApplication
 @EnableAsync
-@EnableAutoConfiguration
-@ComponentScan
+// @EnableAutoConfiguration
+@ComponentScan(basePackages = "olnow.phmobile")
 //@PropertySource("file:${CATALINA_BASE}/conf/Catalina/localhost/web.phmobile.xml")
 class Main extends SpringBootServletInitializer {
     private static final Logger rootLogger = LoggerFactory.getLogger(Main.class);

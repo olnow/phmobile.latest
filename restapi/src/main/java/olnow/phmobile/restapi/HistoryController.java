@@ -2,6 +2,7 @@ package olnow.phmobile.restapi;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import olnow.phmobile.*;
 
@@ -9,7 +10,8 @@ import java.util.ArrayList;
 
 @RestController
 class HistoryController {
-    private HistoryServices historyServices = new HistoryServices();
+    @Autowired
+    private HistoryServices historyServices; // = new HistoryServices();
     private Logger logger = LoggerFactory.getLogger(HistoryController.class);
 
     @RequestMapping("/getActiveHistory")

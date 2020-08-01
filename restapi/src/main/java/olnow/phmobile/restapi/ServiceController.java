@@ -2,6 +2,7 @@ package olnow.phmobile.restapi;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import olnow.phmobile.PhonesMobile;
-import olnow.phmobile.ServiceServices;
+import olnow.phmobile.IServiceServices;
 
 import java.io.IOException;
 
@@ -18,7 +19,9 @@ import java.io.IOException;
 class ServiceController {
     private Logger logger = LoggerFactory.getLogger(ServiceController.class);
     private PhonesMobile phonesMobile = new PhonesMobile();
-    private ServiceServices serviceServices = new ServiceServices();
+
+    @Autowired
+    private IServiceServices serviceServices; // = new ServiceServices();
 
     @PostMapping("/loadServices")
     @ResponseBody

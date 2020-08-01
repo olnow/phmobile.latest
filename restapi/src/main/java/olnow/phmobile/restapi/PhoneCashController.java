@@ -1,6 +1,5 @@
 package olnow.phmobile.restapi;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,9 @@ import java.util.Calendar;
 @CrossOrigin(origins = "http://localhost:8080")
 @Controller
 class PhoneCashController {
-    private PhoneCashServices phoneCashServices = new PhoneCashServices();
+    @Autowired
+    private PhoneCashServices phoneCashServices;
+    // private PhoneCashServices phoneCashServices = new PhoneCashServices();
     private PhonesMobileLog phonesMobile = new PhonesMobileLog();
     private PhonesServices phonesServices = new PhonesServices();
     private HistoryServices historyServices = new HistoryServices();
