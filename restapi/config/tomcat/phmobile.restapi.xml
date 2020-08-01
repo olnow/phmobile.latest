@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Context> 
+	<Environment name="hibernate.config.file" value="conf/Catalina/localhost/hibernate.cfg.xml" type="java.lang.String"/>
+	<Environment name="allowedUsers" value="test" type="java.lang.String"/>
+	<Environment name="origins" value="http://localhost:8080" type="java.lang.String"/>
+	<Environment name="hibernate.config.file" value="conf/Catalina/localhost/hibernate.cfg.xml" type="java.lang.String"/>
+	<Environment name="origins" value="http://localhost:8080" type="java.lang.String"/>
+	<Environment name="ldap_domain" value="test.ru" type="java.lang.String"/>
+	<Environment name="ldap_url" value="ldaps://test.net/" type="java.lang.String"/>
+	<Environment name="ldap_base" value="DC=test,DC=net" type="java.lang.String"/>
+	<Environment name="lldap_group_suffix" value="OU=Users,DC=test,DC=net" type="java.lang.String"/>
+	<Environment name="smtp_port" value="587" type="java.lang.Integer"/>
+	<Environment name="smtp_host" value="mail.test.ru" type="java.lang.String"/>
+	<Environment name="smtp_auth" value="true" type="java.lang.Boolean"/>
+	<Environment name="smtp_debug" value="false" type="java.lang.Boolean"/>
+	<Environment name="mail_user_name" value="test@test.ru" type="java.lang.String"/>
+	<Environment name="mail_password" value="password" type="java.lang.String"/>
+	<Environment name="mail_from" value="test@test.ru" type="java.lang.String"/>
+	<Environment name="mail_to" value="test@test.ru" type="java.lang.String"/>
+	<Environment name="ad_sync_user_name" value="test@test.ru" type="java.lang.String"/>
+	<Environment name="ad_sync_password" value="password" type="java.lang.String"/>
+	<Environment name="ad_sync_state_cron" value="0 30 3 ? * * *" type="java.lang.String"/>
+
+	<Resource name="jdbc/mobile" auth="Container" type="javax.sql.DataSource" 
+		maxTotal="100" maxIdle="20" maxWaitMillis="10000" 
+		username="phmobile" password="1234"
+	        driverClassName="com.mysql.cj.jdbc.Driver"
+		url="jdbc:mysql://localhost:3306/phmobile?autoReconnect=true&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;serverTimezone=UTC"/>	
+
+</Context>
