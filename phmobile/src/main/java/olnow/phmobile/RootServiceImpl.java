@@ -2,17 +2,20 @@ package olnow.phmobile;
 
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.metamodel.SingularAttribute;
 import java.util.ArrayList;
 
+@Transactional (value = "hibernateTransactionManager")
+@Repository
 public abstract class RootServiceImpl<T> implements IRootService<T> {
     IRootDAO<T> rootDAO;
 
     RootServiceImpl(IRootDAO<T> rootDAO){
         this.rootDAO = rootDAO; 
     }
-    
+
     public void add(T obj) throws HibernateException {
         rootDAO.add(obj);
     }
@@ -25,12 +28,16 @@ public abstract class RootServiceImpl<T> implements IRootService<T> {
         rootDAO.update(obj);
     }
 
-    public T find(Class<T> className, int id) throws HibernateException {
-        return rootDAO.find(className, id);
+    public T find(int id) throws HibernateException {
+        return rootDAO.find(id);
     }
 
-    public T findName(Class<T> tClass, String name) throws HibernateException {
-        return rootDAO.findName(tClass, name);
+    public T find(SingularAttribute attr, String name) throws HibernateException {
+        return rootDAO.find(attr, name);
+    }
+
+    public T findName(String name) throws HibernateException {
+        return rootDAO.findName(name);
     }
 
     @Deprecated
@@ -49,4 +56,5 @@ public abstract class RootServiceImpl<T> implements IRootService<T> {
     public T find(Class className, SingularAttribute attr, String name) throws HibernateException {
         return rootDAO.find(className, attr, name);
     }
+
 }
