@@ -3,16 +3,19 @@ package olnow.phmobile;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
 public class HibernateSessionFactoryUtil {
     private static SessionFactory sessionFactory;
     private static String config;
+    private static Logger logger = LoggerFactory.getLogger(HibernateSessionFactoryUtil.class);
 
-    private HibernateSessionFactoryUtil() {}
+    HibernateSessionFactoryUtil() {}
 
-    private HibernateSessionFactoryUtil(String config) {
+    HibernateSessionFactoryUtil(String config) {
         this.config = config;
     }
 
@@ -48,7 +51,8 @@ public class HibernateSessionFactoryUtil {
                 sessionFactory = configuration.buildSessionFactory(builder.build());
 
             } catch (Exception e) {
-                System.out.println("Исключение!" + e);
+                logger.error("Error get session, config file: %", config);
+                // System.out.println("Исключение!" + e);
             }
         }
         return sessionFactory;
