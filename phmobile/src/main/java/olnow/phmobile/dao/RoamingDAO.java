@@ -1,17 +1,19 @@
-package olnow.phmobile;
+package olnow.phmobile.dao;
 
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import olnow.phmobile.IRoamingDAO;
+import olnow.phmobile.Roaming;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 
-import javax.persistence.NoResultException;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.SingularAttribute;
-import java.util.ArrayList;
+@Repository
+@Qualifier("RoamingDAO")
+public class RoamingDAO extends RootDAOImpl<Roaming> implements IRoamingDAO<Roaming> {
 
-public class RoamingDAO {
+    RoamingDAO() {
+        super(Roaming.class);
+    }
+
+    /*
     public void addRoaming(Roaming roaming) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         session.beginTransaction();
@@ -35,6 +37,7 @@ public class RoamingDAO {
         return roaming;
     }
 
+
     public Roaming findRoaming(String roamingname) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         Roaming roaming = session.get(Roaming.class, roamingname);
@@ -51,12 +54,13 @@ public class RoamingDAO {
         return roamings;
     }
 
-    public Object findRoaming(Class className, SingularAttribute attr, String name) {
+
+    public Object findRoaming(SingularAttribute attr, String name) {
         Session session = HibernateSessionFactoryUtil.getSessionFactory().openSession();
         CriteriaBuilder criteria = session.getCriteriaBuilder();
-        CriteriaQuery<Object> criteriaQuery = criteria.createQuery(className);
-        Root<Object> root = criteriaQuery.from(className);
-        EntityType type = session.getMetamodel().entity(className);
+        CriteriaQuery<Object> criteriaQuery = criteria.createQuery((Class) tClass);
+        Root<Object> root = criteriaQuery.from((Class) tClass);
+        EntityType type = session.getMetamodel().entity((Class) tClass);
 
         criteriaQuery.select(root).where(criteria.equal(
                 root.get(attr), name));
@@ -78,6 +82,6 @@ public class RoamingDAO {
         finally {
             session.close();
         }
-    }
+    }*/
 
 }
