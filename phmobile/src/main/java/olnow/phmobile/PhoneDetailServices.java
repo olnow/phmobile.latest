@@ -27,7 +27,10 @@ public class PhoneDetailServices {
     private HistoryServices historyServices = new HistoryServices();
     private CallCategoryServices callCategoryServices = new CallCategoryServices();
     private DescriptionServices descriptionServices = new DescriptionServices();
-    private RoamingServices roamingServices = new RoamingServices();
+
+    @Autowired
+    @Qualifier("RoamingServices")
+    private IRoamingServices roamingServices; // = new RoamingServices();
 
     @Autowired
     @Qualifier("TariffServices")
