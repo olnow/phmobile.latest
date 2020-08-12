@@ -9,8 +9,9 @@ public interface IRootService<T> {
     void add(T obj);
     void addOrUpdate(T obj);
     void update(T obj);
-    T find(Class<T> className, int id);
-    T findName(Class<T> tClass, String name);
+    T find(int id);
+    T find(SingularAttribute attr, String name);
+    T findName(String name);
     @Deprecated
     ArrayList<T> get(String tableName);
     ArrayList<T> getSorted(SingularAttribute orderBy);
