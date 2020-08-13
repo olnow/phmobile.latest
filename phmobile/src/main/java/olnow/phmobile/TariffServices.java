@@ -1,5 +1,6 @@
 package olnow.phmobile;
 
+import olnow.phmobile.dao.TariffDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
