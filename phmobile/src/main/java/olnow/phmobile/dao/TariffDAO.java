@@ -1,5 +1,8 @@
-package olnow.phmobile;
+package olnow.phmobile.dao;
 
+import olnow.phmobile.IRootDAO;
+import olnow.phmobile.Tariff;
+import olnow.phmobile.dao.RootDAOImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 

@@ -1,5 +1,6 @@
-package olnow.phmobile;
+package olnow.phmobile.dao;
 
+import olnow.phmobile.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 
 @Repository
 @Qualifier("ServiceDAO")
-public class ServiceDAO extends RootDAOImpl<Service> implements IServiceDAO<Service>  {// extends RootDAOImpl<Service> {
+public class ServiceDAO extends RootDAOImpl<Service> implements IServiceDAO<Service> {// extends RootDAOImpl<Service> {
     Logger logger = LoggerFactory.getLogger(ServiceDAO.class);
 
     ServiceDAO() {
