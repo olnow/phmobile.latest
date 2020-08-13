@@ -199,7 +199,10 @@ public class LdapUtils {
                     while (memberOf.hasMore()) {
                         String group = (String) memberOf.next();
                         int start;
-                        if ((start = group.indexOf("OU=" + department)) >= 0) {
+                        //TODO add filial groups
+                        if ((start = group.indexOf("OU=" + department)) >= 0 &&
+                                (group.indexOf(groupSuffix) > 0)) {
+                            // System.out.println(group + ": " + start + ": " + (group.indexOf(groupSuffix)-1));
                             StringBuilder str = new StringBuilder(group.substring(start, group.indexOf(groupSuffix)-1));
                             rootDepartment = new StringBuilder(str.substring(str.lastIndexOf("OU=")+3));
                         }
