@@ -27,13 +27,23 @@ public class PeopleServices {
 
     public ArrayList<People> findPeopleAndSetID(ArrayList<People> people) {
         if (people == null) return null;
+        people.stream()
+                .filter(human -> {
+                    return human != null && human.getAccount() != null && !human.getAccount().isEmpty();
+                })
+                .map(human -> {
+                    People findPeople = findByAccount(human.getAccount());
+                    if (findPeople != null) human.setIdpeople(findPeople.getIdpeople());
+                    return human;
+                });
+        /*
         people.forEach(human -> {
             if (human != null && human.getAccount() != null && !human.getAccount().isEmpty()) {
                 // People findPeople = findPeople(human.getFio());
                 People findPeople = findByAccount(human.getAccount());
                 if (findPeople != null) human.setIdpeople(findPeople.getIdpeople());
             }
-        });
+        });*/
         return people;
     }
 }
